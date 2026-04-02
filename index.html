@@ -218,6 +218,11 @@
     padding-top: 2px;
     cursor: pointer;
   }
+  .item-time.empty {
+    color: var(--accent2);
+    border-bottom: 1px dashed var(--accent2);
+    font-style: italic;
+  }
   .item-time:hover { color: var(--accent); }
   .item-time[contenteditable="true"] {
     outline: none;
@@ -599,7 +604,7 @@ function renderItem(item, type, dayId) {
       <span class="item-name" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-name',${item.id})">${escHtml(item.name)}</span>
       <span class="item-note" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-note',${item.id})">${escHtml(item.note || 'Add a note...')}</span>
     </div>
-    <div class="item-time" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-time',${item.id})">${escHtml(item.time || '')}</div>
+    <div class="item-time ${item.time ? '' : 'empty'}" contenteditable="false" onclick="startTimeEdit(event,this,'${type}',${dayId},${item.id})" onblur="endTimeEdit(this,'${type}',${dayId},${item.id})">${escHtml(item.time || 'Add time')}</div>
     <button class="item-delete" onclick="deleteItem('${type}',${dayId},${item.id})" title="Remove">✕</button>
   </li>`;
 }
@@ -624,6 +629,33 @@ function endEdit(el, type, dayId, field, itemId) {
   else if (field === 'item-name') { const item = day.items.find(i => i.id === itemId); if(item) item.name = val; }
   else if (field === 'item-note') { const item = day.items.find(i => i.id === itemId); if(item) item.note = val; }
   else if (field === 'item-time') { const item = day.items.find(i => i.id === itemId); if(item) item.time = val; }
+  save();
+}
+
+function startTimeEdit(e, el, type, dayId, itemId) {
+  e.stopPropagation();
+  if (el.classList.contains('empty')) el.innerText = '';
+  el.classList.remove('empty');
+  el.contentEditable = 'true';
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+}
+
+function endTimeEdit(el, type, dayId, itemId) {
+  el.contentEditable = 'false';
+  const val = el.innerText.trim();
+  const day = state[type].find(d => d.id === dayId);
+  const item = day && day.items.find(i => i.id === itemId);
+  if (item) item.time = val;
+  if (!val) {
+    el.innerText = 'Add time';
+    el.classList.add('empty');
+  } else {
+    el.classList.remove('empty');
+  }
   save();
 }
 
