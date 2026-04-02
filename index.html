@@ -857,13 +857,9 @@ renderDays('eats');
 renderTips();
 renderPacking();
 
-// Restore and save header fields
-const titleEl = document.getElementById('trip-title');
-const datesEl = document.getElementById('trip-dates');
-if (state.tripTitle) titleEl.innerText = state.tripTitle;
-if (state.tripDates) datesEl.innerText = state.tripDates;
-titleEl.addEventListener('blur', () => { state.tripTitle = titleEl.innerText.trim(); save(); });
-datesEl.addEventListener('blur', () => { state.tripDates = datesEl.innerText.trim(); save(); });
+// Restore header fields from saved state
+if (state.tripTitle) document.getElementById('trip-title').innerText = state.tripTitle;
+if (state.tripDates) document.getElementById('trip-dates').innerText = state.tripDates;
 </script>
 </body>
 </html>
