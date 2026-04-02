@@ -853,9 +853,13 @@ renderDays('eats');
 renderTips();
 renderPacking();
 
-// Editable header
-document.getElementById('trip-title').addEventListener('blur', save);
-document.getElementById('trip-dates').addEventListener('blur', save);
+// Restore and save header fields
+const titleEl = document.getElementById('trip-title');
+const datesEl = document.getElementById('trip-dates');
+if (state.tripTitle) titleEl.innerText = state.tripTitle;
+if (state.tripDates) datesEl.innerText = state.tripDates;
+titleEl.addEventListener('blur', () => { state.tripTitle = titleEl.innerText.trim(); save(); });
+datesEl.addEventListener('blur', () => { state.tripDates = datesEl.innerText.trim(); save(); });
 </script>
 </body>
 </html>
