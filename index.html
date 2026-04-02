@@ -557,14 +557,32 @@ function switchTab(tab) {
 }
 
 function editInline(el, stateKey) {
+  if (el.contentEditable === 'true') return;
   el.contentEditable = 'true';
   el.focus();
-  el.addEventListener('blur', () => {
+  const sel = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+  function finish() {
     el.contentEditable = 'false';
-    if (stateKey) state[stateKey] = el.innerText.trim();
-    save();
-  }, { once: true });
-  el.addEventListener('keydown', e => { if(e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+    const val = el.innerText.trim();
+    if (stateKey && val) {
+      state[stateKey] = val;
+      save();
+      el.style.borderBottom = '1px solid var(--accent2)';
+      setTimeout(() => el.style.borderBottom = '', 1000);
+    }
+    el.removeEventListener('blur', finish);
+    el.removeEventListener('keydown', onKey);
+  }
+  function onKey(e) {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+  }
+  el.addEventListener('blur', finish);
+  el.addEventListener('keydown', onKey);
 }
 
 function renderDays(type) {
