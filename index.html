@@ -388,8 +388,8 @@
 <header>
   <div class="header-kanji">日</div>
   <div class="header-subtitle">Travel Itinerary</div>
-  <h1 id="trip-title" onclick="editInline(this)" title="Click to edit">Japan ✈</h1>
-  <div class="header-dates" id="trip-dates" onclick="editInline(this)" title="Click to edit">Add your travel dates here</div>
+  <h1 id="trip-title" onclick="editInline(this,'tripTitle')" title="Click to edit">Japan ✈</h1>
+  <div class="header-dates" id="trip-dates" onclick="editInline(this,'tripDates')" title="Click to edit">Add your travel dates here</div>
 </header>
 
 <nav>
@@ -556,10 +556,14 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
 }
 
-function editInline(el) {
+function editInline(el, stateKey) {
   el.contentEditable = 'true';
   el.focus();
-  el.addEventListener('blur', () => { el.contentEditable = 'false'; save(); }, { once: true });
+  el.addEventListener('blur', () => {
+    el.contentEditable = 'false';
+    if (stateKey) state[stateKey] = el.innerText.trim();
+    save();
+  }, { once: true });
   el.addEventListener('keydown', e => { if(e.key === 'Enter') { e.preventDefault(); el.blur(); } });
 }
 
