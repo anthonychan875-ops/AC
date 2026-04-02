@@ -388,8 +388,8 @@
 <header>
   <div class="header-kanji">日</div>
   <div class="header-subtitle">Travel Itinerary</div>
-  <h1 id="trip-title" onclick="editInline(this,'tripTitle')" title="Click to edit">Japan ✈</h1>
-  <div class="header-dates" id="trip-dates" onclick="editInline(this,'tripDates')" title="Click to edit">Add your travel dates here</div>
+  <h1 id="trip-title" title="Click to edit">Japan ✈</h1>
+  <div class="header-dates" id="trip-dates" title="Click to edit">Add your travel dates here</div>
 </header>
 
 <nav>
@@ -875,9 +875,34 @@ renderDays('eats');
 renderTips();
 renderPacking();
 
-// Restore header fields from saved state
-if (state.tripTitle) document.getElementById('trip-title').innerText = state.tripTitle;
-if (state.tripDates) document.getElementById('trip-dates').innerText = state.tripDates;
+// Header fields — stored directly in localStorage, independent of state
+const titleEl = document.getElementById('trip-title');
+const datesEl = document.getElementById('trip-dates');
+
+const savedTitle = localStorage.getItem('japan-header-title');
+const savedDates = localStorage.getItem('japan-header-dates');
+if (savedTitle) titleEl.innerText = savedTitle;
+if (savedDates) datesEl.innerText = savedDates;
+
+titleEl.onclick = function() {
+  titleEl.contentEditable = 'true';
+  titleEl.focus();
+};
+titleEl.onblur = function() {
+  titleEl.contentEditable = 'false';
+  localStorage.setItem('japan-header-title', titleEl.innerText.trim());
+};
+titleEl.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } };
+
+datesEl.onclick = function() {
+  datesEl.contentEditable = 'true';
+  datesEl.focus();
+};
+datesEl.onblur = function() {
+  datesEl.contentEditable = 'false';
+  localStorage.setItem('japan-header-dates', datesEl.innerText.trim());
+};
+datesEl.onkeydown = function(e) { if (e.key === 'Enter') { e.preventDefault(); datesEl.blur(); } };
 </script>
 </body>
 </html>
