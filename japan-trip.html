@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Trip</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1612;
+    --paper: #faf7f2;
+    --paper2: #f2ede4;
+    --accent: #c0392b;
+    --accent2: #e8b86d;
+    --muted: #7a6f65;
+    --border: rgba(26,22,18,0.12);
+    --red-light: #fdf0ee;
+    --gold-light: #fdf8ee;
+    --serif: 'Shippori Mincho', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .header-kanji {
+    position: absolute;
+    font-family: var(--serif);
+    font-size: 14rem;
+    opacity: 0.04;
+    color: white;
+    top: -2rem;
+    right: -1rem;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .header-subtitle {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 0.75rem;
+  }
+  header h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .header-dates {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(255,255,255,0.2);
+    display: inline-block;
+  }
+  .header-dates:hover { color: rgba(255,255,255,0.85); }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    background: var(--paper2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 1rem 1.5rem;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-section { display: none; }
+  .tab-section.active { display: block; }
+
+  /* MAIN LAYOUT */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  /* DAY CARDS */
+  .day-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--paper2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    gap: 1rem;
+  }
+  .day-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .day-number {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 2rem;
+  }
+  .day-info h3 {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .day-info .day-date {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+    cursor: pointer;
+  }
+  .day-info .day-date:hover { color: var(--accent); }
+  .day-toggle { font-size: 1rem; color: var(--muted); transition: transform 0.2s; }
+  .day-card.collapsed .day-toggle { transform: rotate(-90deg); }
+  .day-body { padding: 1.25rem; }
+  .day-card.collapsed .day-body { display: none; }
+
+  /* ITEMS (events/eats) */
+  .item-list { list-style: none; }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    group: true;
+  }
+  .item:last-child { border-bottom: none; }
+  .item-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .item-dot.eat { background: var(--accent); }
+  .item-content { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    border-bottom: 1px dashed transparent;
+    display: inline;
+  }
+  .item-name:hover { border-bottom-color: var(--muted); }
+  .item-name[contenteditable="true"] {
+    outline: none;
+    border-bottom: 1px dashed var(--accent);
+    background: var(--red-light);
+    padding: 0 2px;
+    border-radius: 1px;
+  }
+  .item-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 300;
+    margin-top: 2px;
+    cursor: pointer;
+    display: block;
+  }
+  .item-note:hover { color: var(--ink); }
+  .item-note[contenteditable="true"] {
+    outline: none;
+    background: rgba(0,0,0,0.03);
+    padding: 2px 4px;
+    border-radius: 2px;
+  }
+  .item-time {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-width: 3.5rem;
+    text-align: right;
+    padding-top: 2px;
+    cursor: pointer;
+  }
+  .item-time:hover { color: var(--accent); }
+  .item-time[contenteditable="true"] {
+    outline: none;
+    background: var(--red-light);
+    padding: 0 2px;
+    border-radius: 1px;
+  }
+  .item-delete {
+    background: none;
+    border: none;
+    color: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    border-radius: 2px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .item:hover .item-delete { color: var(--muted); }
+  .item-delete:hover { color: var(--accent) !important; background: var(--red-light); }
+
+  /* ADD ITEM */
+  .add-item-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    align-items: center;
+  }
+  .add-item-input {
+    flex: 1;
+    padding: 0.45rem 0.75rem;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .add-item-input:focus { border-color: var(--accent2); background: white; }
+  .add-item-input::placeholder { color: rgba(122,111,101,0.6); }
+  .add-btn {
+    padding: 0.45rem 1rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 2px;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .add-btn:hover { background: var(--accent); }
+
+  /* ADD DAY */
+  .add-day-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: none;
+    border: 1px dashed rgba(26,22,18,0.2);
+    border-radius: 2px;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .add-day-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--red-light); }
+
+  /* TIPS / NOTES SECTION */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .note-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.25rem;
+  }
+  .note-card h4 {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+  .note-card ul { list-style: none; }
+  .note-card li {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  .note-card li:last-child { border-bottom: none; }
+  .note-card li:hover { color: var(--ink); }
+  .note-card li span[contenteditable="true"] { outline: none; background: var(--red-light); }
+  .note-dot { color: var(--accent2); flex-shrink: 0; margin-top: 1px; }
+
+  /* PACKING */
+  .pack-section { margin-bottom: 1.5rem; }
+  .pack-section h4 { font-family: var(--serif); font-size: 0.95rem; margin-bottom: 0.75rem; }
+  .pack-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .pack-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+  }
+  .pack-item.checked { background: var(--paper2); color: var(--ink); text-decoration: line-through; }
+  .pack-item:hover { border-color: var(--accent2); color: var(--ink); }
+  .pack-check { font-size: 0.7rem; color: var(--accent); }
+  .pack-del { font-size: 0.7rem; color: transparent; margin-left: 2px; }
+  .pack-item:hover .pack-del { color: var(--muted); }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-title .kana {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    main { padding: 1.25rem 1rem 3rem; }
+    header { padding: 2rem 1.25rem 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-kanji">日</div>
+  <div class="header-subtitle">Travel Itinerary</div>
+  <h1 id="trip-title" onclick="editInline(this)" title="Click to edit">Japan ✈</h1>
+  <div class="header-dates" id="trip-dates" onclick="editInline(this)" title="Click to edit">Add your travel dates here</div>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="switchTab('events')">📅 Events</button>
+  <button class="tab-btn" onclick="switchTab('eats')">🍜 Eats</button>
+  <button class="tab-btn" onclick="switchTab('tips')">💡 Tips & Notes</button>
+  <button class="tab-btn" onclick="switchTab('packing')">🎒 Packing</button>
+</nav>
+
+<main>
+
+<!-- EVENTS TAB -->
+<div class="tab-section active" id="tab-events">
+  <div id="events-days"></div>
+  <button class="add-day-btn" onclick="addDay('events')">+ Add a day</button>
+</div>
+
+<!-- EATS TAB -->
+<div class="tab-section" id="tab-eats">
+  <div id="eats-days"></div>
+  <button class="add-day-btn" onclick="addDay('eats')">+ Add a day</button>
+</div>
+
+<!-- TIPS TAB -->
+<div class="tab-section" id="tab-tips">
+  <div class="notes-grid" id="tips-grid"></div>
+  <button class="add-day-btn" onclick="addTipCard()">+ Add a note card</button>
+</div>
+
+<!-- PACKING TAB -->
+<div class="tab-section" id="tab-packing">
+  <div id="packing-container"></div>
+  <button class="add-day-btn" onclick="addPackingSection()">+ Add a category</button>
+</div>
+
+</main>
+
+<script>
+const state = {
+  events: [
+    {
+      id: 1, title: 'Tokyo Arrival', date: 'Day 1',
+      items: [
+        { id: 1, name: 'Land at Narita / Haneda', note: 'Get Suica card & pocket wifi', time: 'AM' },
+        { id: 2, name: 'Check in to hotel', note: 'Shinjuku area recommended', time: '3 PM' },
+        { id: 3, name: 'Explore Shinjuku at night', note: 'Golden Gai, Kabukicho', time: 'Evening' },
+      ]
+    },
+    {
+      id: 2, title: 'Tokyo — Temples & Markets', date: 'Day 2',
+      items: [
+        { id: 1, name: 'Senso-ji Temple, Asakusa', note: 'Arrive early to beat crowds', time: '8 AM' },
+        { id: 2, name: 'Nakamise Shopping Street', note: 'Pick up souvenirs', time: '9:30 AM' },
+        { id: 3, name: 'teamLab Borderless / Planets', note: 'Book tickets in advance!', time: '2 PM' },
+        { id: 4, name: 'Shibuya Crossing & Sky Deck', note: 'Best at sunset for photos', time: '5 PM' },
+      ]
+    },
+    {
+      id: 3, title: 'Kyoto Arrival', date: 'Day 3',
+      items: [
+        { id: 1, name: 'Shinkansen to Kyoto', note: '~2h 15min on the Nozomi', time: '9 AM' },
+        { id: 2, name: 'Fushimi Inari Shrine', note: 'Hike the torii gate trail', time: '12 PM' },
+        { id: 3, name: 'Gion district stroll', note: 'Spot geiko & maiko in the evening', time: '6 PM' },
+      ]
+    },
+  ],
+  eats: [
+    {
+      id: 1, title: 'Tokyo Must-Eats', date: 'Days 1–2',
+      items: [
+        { id: 1, name: 'Ichiran Ramen', note: 'Solo ramen booths — iconic', time: 'Dinner' },
+        { id: 2, name: 'Tsukiji Outer Market', note: 'Sushi breakfast & tamago', time: 'Morning' },
+        { id: 3, name: 'Gyukatsu Motomura', note: 'DIY beef katsu on a stone grill', time: 'Lunch' },
+        { id: 4, name: 'Konbini snacks', note: '7-Eleven / Lawson — must try everything', time: 'Any' },
+      ]
+    },
+    {
+      id: 2, title: 'Kyoto Eats', date: 'Day 3+',
+      items: [
+        { id: 1, name: 'Nishiki Market (Kyoto\'s Kitchen)', note: 'Tofu, matcha, pickles, skewers', time: 'Lunch' },
+        { id: 2, name: 'Obanzai Kaiseki dinner', note: 'Traditional multi-course Kyoto cuisine', time: 'Dinner' },
+        { id: 3, name: 'Uji Matcha desserts', note: 'Day trip — best matcha region in Japan', time: 'Afternoon' },
+      ]
+    },
+  ],
+  tips: [
+    {
+      id: 1, title: 'Transport', items: [
+        'Get a Suica/Pasmo IC card at the airport',
+        'IC Rail Pass for Shinkansen — buy before flying',
+        'Google Maps works great for transit navigation',
+        'Taxis are expensive — avoid unless necessary',
+      ]
+    },
+    {
+      id: 2, title: 'Money', items: [
+        'Japan is still heavily cash-based',
+        '7-Eleven ATMs accept foreign cards reliably',
+        '¥100 = ~$0.65 USD (roughly)',
+        'Many restaurants are cash-only',
+      ]
+    },
+    {
+      id: 3, title: 'Etiquette', items: [
+        'No eating/drinking while walking',
+        'Both hands when giving/receiving things',
+        'Quiet on trains — no phone calls',
+        'Take shoes off before entering homes',
+      ]
+    },
+    {
+      id: 4, title: 'Apps & Tech', items: [
+        'Google Translate (camera mode is magic)',
+        'Hyperdia or Navitime for trains',
+        'Tabelog for finding local restaurants',
+        'Pocket wifi or eSIM for data',
+      ]
+    },
+  ],
+  packing: [
+    {
+      id: 1, title: 'Clothes', items: [
+        { id:1, name:'Comfortable walking shoes', checked: false },
+        { id:2, name:'Light rain jacket', checked: false },
+        { id:3, name:'Slip-on shoes (temples)', checked: false },
+        { id:4, name:'Neutral, modest outfits', checked: false },
+      ]
+    },
+    {
+      id: 2, title: 'Essentials', items: [
+        { id:1, name:'Passport + copies', checked: false },
+        { id:2, name:'Travel adapter (Type A)', checked: false },
+        { id:3, name:'Portable battery pack', checked: false },
+        { id:4, name:'Prescription meds', checked: false },
+        { id:5, name:'Cash (yen)', checked: false },
+      ]
+    },
+    {
+      id: 3, title: 'Tech', items: [
+        { id:1, name:'Pocket wifi / SIM', checked: false },
+        { id:2, name:'Camera + extra battery', checked: false },
+        { id:3, name:'Universal adapter', checked: false },
+      ]
+    },
+  ],
+  nextId: { events: 100, eats: 100, tips: 100, packing: 100 },
+};
+
+function save() {
+  try { localStorage.setItem('japan-trip', JSON.stringify(state)); } catch(e) {}
+}
+
+function load() {
+  try {
+    const d = localStorage.getItem('japan-trip');
+    if (d) Object.assign(state, JSON.parse(d));
+  } catch(e) {}
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function editInline(el) {
+  el.contentEditable = 'true';
+  el.focus();
+  el.addEventListener('blur', () => { el.contentEditable = 'false'; save(); }, { once: true });
+  el.addEventListener('keydown', e => { if(e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+}
+
+function renderDays(type) {
+  const container = document.getElementById(type + '-days');
+  container.innerHTML = '';
+  state[type].forEach(day => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.dataset.id = day.id;
+    card.innerHTML = `
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-label">
+          <div class="day-number">${day.id}</div>
+          <div class="day-info">
+            <h3 contenteditable="false" class="edit-day-title" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${day.id},'title')">${escHtml(day.title)}</h3>
+            <div class="day-date" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${day.id},'date')">${escHtml(day.date)}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <button onclick="deleteDay(event,'${type}',${day.id})" style="background:none;border:none;cursor:pointer;font-size:0.75rem;color:#aaa;padding:2px 4px;" title="Delete day">✕</button>
+          <div class="day-toggle">▾</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <ul class="item-list" id="items-${type}-${day.id}">
+          ${day.items.map(item => renderItem(item, type, day.id)).join('')}
+        </ul>
+        <div class="add-item-row">
+          <input class="add-item-input" placeholder="Add ${type === 'eats' ? 'a restaurant or dish' : 'an activity or place'}..." id="inp-${type}-${day.id}" onkeydown="if(event.key==='Enter')addItem('${type}',${day.id})">
+          <button class="add-btn" onclick="addItem('${type}',${day.id})">Add</button>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function renderItem(item, type, dayId) {
+  return `<li class="item" id="item-${type}-${dayId}-${item.id}">
+    <div class="item-dot ${type === 'eats' ? 'eat' : ''}"></div>
+    <div class="item-content">
+      <span class="item-name" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-name',${item.id})">${escHtml(item.name)}</span>
+      <span class="item-note" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-note',${item.id})">${escHtml(item.note || 'Add a note...')}</span>
+    </div>
+    <div class="item-time" contenteditable="false" onclick="startEdit(event,this)" onblur="endEdit(this,'${type}',${dayId},'item-time',${item.id})">${escHtml(item.time || '')}</div>
+    <button class="item-delete" onclick="deleteItem('${type}',${dayId},${item.id})" title="Remove">✕</button>
+  </li>`;
+}
+
+function startEdit(e, el) {
+  e.stopPropagation();
+  el.contentEditable = 'true';
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+}
+
+function endEdit(el, type, dayId, field, itemId) {
+  el.contentEditable = 'false';
+  const val = el.innerText.trim();
+  const day = state[type].find(d => d.id === dayId);
+  if (!day) return;
+  if (field === 'title') day.title = val;
+  else if (field === 'date') day.date = val;
+  else if (field === 'item-name') { const item = day.items.find(i => i.id === itemId); if(item) item.name = val; }
+  else if (field === 'item-note') { const item = day.items.find(i => i.id === itemId); if(item) item.note = val; }
+  else if (field === 'item-time') { const item = day.items.find(i => i.id === itemId); if(item) item.time = val; }
+  save();
+}
+
+function toggleDay(header) {
+  const card = header.closest('.day-card');
+  card.classList.toggle('collapsed');
+}
+
+function addItem(type, dayId) {
+  const inp = document.getElementById('inp-' + type + '-' + dayId);
+  const val = inp.value.trim();
+  if (!val) return;
+  const day = state[type].find(d => d.id === dayId);
+  const newItem = { id: ++state.nextId[type], name: val, note: 'Tap to add a note', time: '' };
+  day.items.push(newItem);
+  inp.value = '';
+  const list = document.getElementById('items-' + type + '-' + dayId);
+  const li = document.createElement('li');
+  li.outerHTML; // dummy
+  const div = document.createElement('div');
+  div.innerHTML = renderItem(newItem, type, dayId);
+  list.appendChild(div.firstChild);
+  save();
+}
+
+function deleteItem(type, dayId, itemId) {
+  const day = state[type].find(d => d.id === dayId);
+  day.items = day.items.filter(i => i.id !== itemId);
+  const el = document.getElementById('item-' + type + '-' + dayId + '-' + itemId);
+  if (el) el.remove();
+  save();
+}
+
+function deleteDay(e, type, dayId) {
+  e.stopPropagation();
+  if (!confirm('Delete this day?')) return;
+  state[type] = state[type].filter(d => d.id !== dayId);
+  renderDays(type);
+  save();
+}
+
+function addDay(type) {
+  const id = ++state.nextId[type];
+  const newDay = {
+    id, title: 'New Day',
+    date: 'Click to set date',
+    items: []
+  };
+  state[type].push(newDay);
+  renderDays(type);
+  save();
+  setTimeout(() => {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const title = card.querySelector('.edit-day-title');
+      if (title) { title.contentEditable = 'true'; title.focus(); title.select && title.select(); }
+    }
+  }, 100);
+}
+
+// TIPS
+function renderTips() {
+  const grid = document.getElementById('tips-grid');
+  grid.innerHTML = '';
+  state.tips.forEach(card => {
+    const div = document.createElement('div');
+    div.className = 'note-card';
+    div.innerHTML = `
+      <h4 contenteditable="false" onclick="startEdit(event,this)" onblur="saveTipField(this,${card.id},'title')">${escHtml(card.title)}</h4>
+      <ul id="tip-list-${card.id}">
+        ${card.items.map((item,i) => `<li>
+          <span class="note-dot">›</span>
+          <span contenteditable="false" onclick="startEdit(event,this)" onblur="saveTipItem(this,${card.id},${i})">${escHtml(item)}</span>
+          <button onclick="deleteTipItem(${card.id},${i})" style="background:none;border:none;cursor:pointer;font-size:0.7rem;color:transparent;margin-left:auto;" onmouseenter="this.style.color='#c0392b'" onmouseleave="this.style.color='transparent'">✕</button>
+        </li>`).join('')}
+      </ul>
+      <div style="display:flex;gap:0.4rem;margin-top:0.75rem;">
+        <input class="add-item-input" style="font-size:0.78rem;padding:0.3rem 0.5rem;" placeholder="Add a tip..." id="tip-inp-${card.id}" onkeydown="if(event.key==='Enter')addTipItem(${card.id})">
+        <button class="add-btn" style="padding:0.3rem 0.65rem;font-size:0.75rem;" onclick="addTipItem(${card.id})">+</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function saveTipField(el, cardId, field) {
+  el.contentEditable = 'false';
+  const card = state.tips.find(c => c.id === cardId);
+  if (card) card[field] = el.innerText.trim();
+  save();
+}
+
+function saveTipItem(el, cardId, idx) {
+  el.contentEditable = 'false';
+  const card = state.tips.find(c => c.id === cardId);
+  if (card) card.items[idx] = el.innerText.trim();
+  save();
+}
+
+function addTipItem(cardId) {
+  const inp = document.getElementById('tip-inp-' + cardId);
+  const val = inp.value.trim();
+  if (!val) return;
+  const card = state.tips.find(c => c.id === cardId);
+  card.items.push(val);
+  inp.value = '';
+  renderTips();
+  save();
+}
+
+function deleteTipItem(cardId, idx) {
+  const card = state.tips.find(c => c.id === cardId);
+  card.items.splice(idx, 1);
+  renderTips();
+  save();
+}
+
+function addTipCard() {
+  state.tips.push({ id: ++state.nextId.tips, title: 'New Category', items: ['Click to add a tip'] });
+  renderTips();
+  save();
+}
+
+// PACKING
+function renderPacking() {
+  const container = document.getElementById('packing-container');
+  container.innerHTML = '';
+  state.packing.forEach(section => {
+    const div = document.createElement('div');
+    div.className = 'pack-section';
+    div.innerHTML = `
+      <h4 contenteditable="false" onclick="startEdit(event,this)" onblur="savePackField(this,${section.id},'title')">${escHtml(section.title)}</h4>
+      <div class="pack-grid" id="pack-grid-${section.id}">
+        ${section.items.map(item => `
+          <div class="pack-item ${item.checked ? 'checked' : ''}" id="pack-${section.id}-${item.id}" onclick="togglePack(${section.id},${item.id})">
+            <span class="pack-check">${item.checked ? '✓' : '○'}</span>
+            <span>${escHtml(item.name)}</span>
+            <button class="pack-del" onclick="deletePack(event,${section.id},${item.id})">✕</button>
+          </div>`).join('')}
+        <div class="pack-item" style="border-style:dashed;cursor:pointer;" onclick="addPackItem(${section.id})">
+          <span style="color:#aaa;font-size:0.8rem;">+</span>
+          <span style="color:#aaa;">Add item</span>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function togglePack(sectionId, itemId) {
+  const section = state.packing.find(s => s.id === sectionId);
+  const item = section.items.find(i => i.id === itemId);
+  item.checked = !item.checked;
+  renderPacking();
+  save();
+}
+
+function deletePack(e, sectionId, itemId) {
+  e.stopPropagation();
+  const section = state.packing.find(s => s.id === sectionId);
+  section.items = section.items.filter(i => i.id !== itemId);
+  renderPacking();
+  save();
+}
+
+function addPackItem(sectionId) {
+  const name = prompt('Item name:');
+  if (!name) return;
+  const section = state.packing.find(s => s.id === sectionId);
+  section.items.push({ id: ++state.nextId.packing, name: name.trim(), checked: false });
+  renderPacking();
+  save();
+}
+
+function savePackField(el, sectionId, field) {
+  el.contentEditable = 'false';
+  const section = state.packing.find(s => s.id === sectionId);
+  if (section) section[field] = el.innerText.trim();
+  save();
+}
+
+function addPackingSection() {
+  state.packing.push({ id: ++state.nextId.packing, title: 'New Category', items: [] });
+  renderPacking();
+  save();
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// INIT
+load();
+renderDays('events');
+renderDays('eats');
+renderTips();
+renderPacking();
+
+// Editable header
+document.getElementById('trip-title').addEventListener('blur', save);
+document.getElementById('trip-dates').addEventListener('blur', save);
+</script>
+</body>
+</html>
